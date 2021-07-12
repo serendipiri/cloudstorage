@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().loginPage("/login").successForwardUrl("/home").permitAll()
                 .and()
-                .logout().logoutSuccessUrl("/login").permitAll();
+                .logout().logoutUrl("/logout").logoutSuccessUrl("/login").permitAll();
 
         http.csrf().ignoringAntMatchers("/h2-console/**");
         http.headers().frameOptions().sameOrigin();
