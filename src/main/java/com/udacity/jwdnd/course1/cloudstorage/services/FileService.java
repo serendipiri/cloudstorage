@@ -24,8 +24,6 @@ public class FileService {
         return fileMapper.getFileById(userId, fileId);
     }
 
-
-
     public boolean isFileNameAvailable(String fileName, Integer userId) {
         return fileMapper.getFileByName(fileName, userId) == null;
     }
@@ -38,5 +36,9 @@ public class FileService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Integer deleteFile(Integer fileId) {
+        return fileMapper.deleteFile(fileId);
     }
 }

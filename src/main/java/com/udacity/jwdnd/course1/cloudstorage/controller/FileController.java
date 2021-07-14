@@ -59,9 +59,12 @@ public class FileController {
                 .body(file.getFileData());
     }
 
-    @DeleteMapping("/delete")
-    public String deleteFile() {
-
+    @GetMapping("/delete/{id}")
+    public String deleteFile(@PathVariable Integer id) {
+        Integer res = fileService.deleteFile(id);
+        if (res != null && res < 1) {
+            //TODO: "File could not be deleted!"
+        }
         return "redirect:/home";
     }
 
