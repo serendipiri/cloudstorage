@@ -47,7 +47,7 @@ public class FileController {
             handleMessage(true, e.getMessage(), redirectAttributes);
         } catch (Exception e) {
             e.printStackTrace();
-            handleMessage(true, "Something went wrong.", redirectAttributes);
+            handleMessage(true, "File could not be uploaded. Something went wrong.", redirectAttributes);
         }
 
         return "redirect:/home";
@@ -78,10 +78,10 @@ public class FileController {
             handleMessage(true, e.getMessage(), redirectAttributes);
         } catch (Exception e) {
             e.printStackTrace();
-            handleMessage(true, "Something went wrong.", redirectAttributes);
+            handleMessage(true, "File could not be downloaded. Something went wrong.", redirectAttributes);
         }
 
-        return response; //TODO: how to return error msg to /home
+        return response; //TODO: how to return error msg to /home page
     }
 
 //    @GetMapping({"/download","/download/{id:.+}"})
@@ -98,12 +98,13 @@ public class FileController {
             if (res != null && res < 1) {
                 throw new CloudStorageException("File could not be deleted!");
             }
+            handleMessage(false, "File deleted successfully.", redirectAttributes);
 
         } catch (CloudStorageException e) {
             handleMessage(true, e.getMessage(), redirectAttributes);
         } catch (Exception e) {
             e.printStackTrace();
-            handleMessage(true, "Something went wrong.", redirectAttributes);
+            handleMessage(true, "File could not be deleted. Something went wrong.", redirectAttributes);
         }
 
         return "redirect:/home";

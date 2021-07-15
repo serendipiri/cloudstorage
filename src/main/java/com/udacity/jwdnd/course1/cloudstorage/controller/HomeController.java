@@ -25,12 +25,10 @@ public class HomeController {
     }
 
     @GetMapping
-    public String getFileList(Authentication authentication, Model model) {
+    public String getFileList(Authentication authentication, Model model)
+    {
         Integer userId = userService.getUserId(authentication.getName());
         List<File> list = fileService.getFiles(userId);
-        if (list.isEmpty()) {
-            //TODO: "No files have been uploaded yet."
-        }
         model.addAttribute("fileList", list);
         return "home";
     }
@@ -39,4 +37,5 @@ public class HomeController {
     public String post() {
         return "home";
     }
+
 }
