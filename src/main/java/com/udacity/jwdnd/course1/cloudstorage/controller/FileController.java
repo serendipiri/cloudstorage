@@ -84,11 +84,6 @@ public class FileController {
         return response; //TODO: how to return error msg to /home page
     }
 
-//    @GetMapping({"/download","/download/{id:.+}"})
-//    public String downloadFileGet() {
-//        return "redirect:/home?view";
-//    }
-
     @GetMapping("/delete/{id}")
     public String deleteFile(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
 
@@ -112,7 +107,7 @@ public class FileController {
 
 
     public void handleMessage(boolean error, String message, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute(error ? "errorMsg" : "successMsg", message);
+        redirectAttributes.addFlashAttribute(error ? "errorMsgFile" : "successMsgFile", message);
     }
 
 }
