@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.common.CloudStorageException;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/file")
@@ -25,47 +27,91 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public String uploadFile(@RequestParam("fileUpload") MultipartFile multipartFile, Authentication authentication, Model model) {
+    public String uploadFile(@RequestParam("fileUpload") MultipartFile multipartFile, Authentication authentication,
+                             Model model, RedirectAttributes redirectAttributes) {
+        try {
 
-        Integer userId = userService.getUserId(authentication.getName());
+            Integer userId = userService.getUserId(authentication.getName());
 
-        if (multipartFile == null || multipartFile.isEmpty()) {
-            // TODO : "No file selected to upload!"
-        }
-        if (!fileService.isFileNameAvailable(multipartFile.getName(), userId)) {
-            //TODO: "The file with this file name is already exists.";
-        }
-        else {
-            fileService.createFile(multipartFile, userId);
+            if (multipartFile == null || multipartFile.isEmpty()) {
+                throw new CloudStorageException("No file selected to upload!");
+            }
+            if (!fileService.isFileNameAvailable(multipartFile.getOriginalFilename(), userId)) {
+                throw new CloudStorageException("The file with this name is already exists.");
+            } else {
+                fileService.createFile(multipartFile, userId);
+                handleMessage(false, "File uploaded successfully.", redirectAttributes);
+            }
+
+        } catch (CloudStorageException e) {
+            handleMessage(true, e.getMessage(), redirectAttributes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            handleMessage(true, "Something went wrong.", redirectAttributes);
         }
 
         return "redirect:/home";
     }
 
-    @GetMapping("/download/{id}")
-    public ResponseEntity downloadFile(@PathVariable Integer id, Authentication authentication) {
+    @PostMapping("/download")
+    public ResponseEntity downloadFile(@RequestParam("fileDownloadId") Integer id, Authentication authentication,
+                                       RedirectAttributes redirectAttributes) {
 
-        Integer userId = userService.getUserId(authentication.getName());
+        ResponseEntity<byte[]> response = ResponseEntity.notFound().build();
 
-        File file = fileService.getFileById(userId, id);
-        if (file == null) {
-            //TODO: "File not found!"
-            return ResponseEntity.notFound().build();
+        try {
+
+            Integer userId = userService.getUserId(authentication.getName());
+
+            File file = fileService.getFileById(userId, id);
+            if (file == null) {
+                throw new CloudStorageException("File not found!");
+            }
+
+            response = ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(file.getContentType()))
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"" + file.getFileName() + "\"")
+                    .body(file.getFileData());
+
+        } catch (CloudStorageException e) {
+            handleMessage(true, e.getMessage(), redirectAttributes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            handleMessage(true, "Something went wrong.", redirectAttributes);
         }
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(file.getContentType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "inline; filename=\"" + file.getFileName() + "\"")
-                .body(file.getFileData());
+
+        return response; //TODO: how to return error msg to /home
     }
+
+//    @GetMapping({"/download","/download/{id:.+}"})
+//    public String downloadFileGet() {
+//        return "redirect:/home?view";
+//    }
 
     @GetMapping("/delete/{id}")
-    public String deleteFile(@PathVariable Integer id) {
-        Integer res = fileService.deleteFile(id);
-        if (res != null && res < 1) {
-            //TODO: "File could not be deleted!"
+    public String deleteFile(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+
+        try {
+
+            Integer res = fileService.deleteFile(id);
+            if (res != null && res < 1) {
+                throw new CloudStorageException("File could not be deleted!");
+            }
+
+        } catch (CloudStorageException e) {
+            handleMessage(true, e.getMessage(), redirectAttributes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            handleMessage(true, "Something went wrong.", redirectAttributes);
         }
+
         return "redirect:/home";
+    }
+
+
+    public void handleMessage(boolean error, String message, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute(error ? "errorMsg" : "successMsg", message);
     }
 
 }

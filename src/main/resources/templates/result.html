@@ -14,7 +14,7 @@
                 <h1 class="display-5">Success</h1>
                 <span>Your changes were successfully saved. Click <a>here</a> to continue.</span>
             </div>
-            <div class="alert alert-danger fill-parent">
+            <div class="alert alert-danger fill-parent" th:if="${param.errorMsg}">
                 <h1 class="display-5">Error</h1>
                 <span>Your changes were not saved. Click <a>here</a> to continue.</span>
             </div>

@@ -28,10 +28,9 @@ public class HomeController {
     public String getFileList(Authentication authentication, Model model) {
         Integer userId = userService.getUserId(authentication.getName());
         List<File> list = fileService.getFiles(userId);
-//        List<File> list = new ArrayList<File>();
-//        list.add(new File(1, "deneme", null, null, userId, null));
-//        list.add(new File(2, "gelmemeli", null, null, 5, null));
-        list.add(new File(3, "gelmeli", null, null, userId, null));
+        if (list.isEmpty()) {
+            //TODO: "No files have been uploaded yet."
+        }
         model.addAttribute("fileList", list);
         return "home";
     }
