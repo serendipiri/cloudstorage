@@ -25,13 +25,17 @@ public class HomeController {
     }
 
     @GetMapping
-    public String getFileList(Authentication authentication, Model model)
+    public String getLists(Authentication authentication, Model model)
     {
         Integer userId = userService.getUserId(authentication.getName());
 
         model.addAttribute("fileList", fileService.getFiles(userId));
         model.addAttribute("noteList", noteService.getNotes(userId));
 
+        //After Login..
+        if (model.getAttribute("activeTab") == null) {
+            model.addAttribute("activeTab", "files");
+        }
         return "home";
     }
 

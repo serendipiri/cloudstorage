@@ -112,6 +112,7 @@ public class NoteController {
 
 
     public void handleMessage(boolean error, String message, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("activeTab", "notes");
         redirectAttributes.addFlashAttribute(error ? "errorMsgNote" : "successMsgNote", message);
     }
 

@@ -19,18 +19,19 @@
 
                 <nav style="clear: right;">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-item nav-link active" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
-                        <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
-                        <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>
-<!--                        <a class="nav-item nav-link" th:th:classappend="${classActiveTabFiles}" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>-->
-<!--                        <a class="nav-item nav-link" th:th:classappend="${classActiveTabNotes}" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>-->
-<!--                        <a class="nav-item nav-link" th:th:classappend="${classActiveTabCredentials}" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>-->
+                        <a class="nav-item nav-link" th:classappend="${#strings.equals(activeTab, 'files') ? 'active' : ''}"
+                           id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="false">Files</a>
+                        <a class="nav-item nav-link" th:classappend="${#strings.equals(activeTab, 'notes') ? 'active' : ''}"
+                           id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
+                        <a class="nav-item nav-link" th:classappend="${#strings.equals(activeTab, 'credentials') ? 'active' : ''}"
+                           id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>
                     </div>
                 </nav>
-<!--                th:href="@{/note}"-->
+
                 <div class="tab-content" id="nav-tabContent">
 
-                    <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+                    <div class="tab-pane fade" th:classappend="${#strings.equals(activeTab, 'files') ? 'show active' : ''}"
+                         id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
                         <div class="alert alert-warning" role="alert" th:if="${fileList==null or fileList.isEmpty()}">
                             No files have been uploaded yet.
                         </div>
@@ -80,7 +81,8 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
+                    <div class="tab-pane fade" th:classappend="${#strings.equals(activeTab, 'notes') ? 'show active' : ''}"
+                         id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
                         <div>
                             <div class="alert alert-danger fill-parent msg" th:if="${errorMsgNote}">
                                 <span th:text="${errorMsgNote}"></span>
@@ -154,7 +156,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
+
+                    <div class="tab-pane fade" th:classappend="${#strings.equals(activeTab, 'credentials') ? 'show active' : ''}"
+                         id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
                         <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showCredentialModal()">
                             + Add a New Credential
                         </button>
@@ -248,17 +252,6 @@
                 $('#credentialModal').modal('show');
             }
 
-            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-	            localStorage.setItem('activeTab', $(e.target).attr('href'));
-            });
-            var activeTab = localStorage.getItem('activeTab');
-            console.log(activeTab);
-            if(activeTab) {
-	            $('.nav-tabs a[href="' + activeTab + '"]').tab('show');
-            } else {
-                $('.nav-tabs a[href="' + '#nav-files' + '"]').tab('show');
-                $(".msg").hide();
-            }
         </script>
     </body>
 </html>

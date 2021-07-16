@@ -107,7 +107,7 @@ public class FileController {
 
 
     public void handleMessage(boolean error, String message, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("classActiveTabFiles","active");
+        redirectAttributes.addFlashAttribute("activeTab", "files");
         redirectAttributes.addFlashAttribute(error ? "errorMsgFile" : "successMsgFile", message);
     }
 
