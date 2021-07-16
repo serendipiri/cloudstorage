@@ -20,6 +20,7 @@ public class FileService {
     public List<File> getFiles(Integer userId) {
         return fileMapper.fileList(userId);
     }
+
     public File getFileById(Integer userId, Integer fileId) {
         return fileMapper.getFileById(userId, fileId);
     }

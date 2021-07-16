@@ -16,14 +16,20 @@
                 </form>
             </div>
             <div id="contentDiv" style="clear: right;">
+
                 <nav style="clear: right;">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>
                         <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>
                         <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>
+<!--                        <a class="nav-item nav-link" th:th:classappend="${classActiveTabFiles}" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab" aria-controls="nav-files" aria-selected="true">Files</a>-->
+<!--                        <a class="nav-item nav-link" th:th:classappend="${classActiveTabNotes}" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab" aria-controls="nav-notes" aria-selected="false">Notes</a>-->
+<!--                        <a class="nav-item nav-link" th:th:classappend="${classActiveTabCredentials}" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials" role="tab" aria-controls="nav-credentials" aria-selected="false">Credentials</a>-->
                     </div>
                 </nav>
+<!--                th:href="@{/note}"-->
                 <div class="tab-content" id="nav-tabContent">
+
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
                         <div class="alert alert-warning" role="alert" th:if="${fileList==null or fileList.isEmpty()}">
                             No files have been uploaded yet.
@@ -76,19 +82,19 @@
 
                     <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
                         <div>
-                            <div class="alert alert-danger fill-parent msg" th:if="${errorMsgNotes}">
-                                <span th:text="${errorMsgNotes}"></span>
+                            <div class="alert alert-danger fill-parent msg" th:if="${errorMsgNote}">
+                                <span th:text="${errorMsgNote}"></span>
                             </div>
-                            <div class="alert alert-success fill-parent msg" th:if="${successMsgNotes}">
-                                <span th:text="${successMsgNotes}"></span>
+                            <div class="alert alert-success fill-parent msg" th:if="${successMsgNote}">
+                                <span th:text="${successMsgNote}"></span>
                             </div>
                             <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
                                 + Add a New Note
                             </button>
                         </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-striped" id="userTable">
+                        <div class="table-responsive" th:if="${noteList!=null and !noteList.isEmpty()}">
+                            <table class="table table-striped" id="noteTable">
                                 <thead>
                                     <tr>
                                         <th style="width: 20%" scope="col"></th>
@@ -96,14 +102,22 @@
                                         <th style="width: 60%" scope="col">Description</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody th:each="note: ${noteList}">
                                     <tr>
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+
+<!--                                            <form action="#" th:action="@{/note/edit}" th:method="POST" th:target="_blank" style="float:left;">-->
+<!--                                                <input type="hidden" name="noteId" th:value="${note.noteId}">-->
+<!--                                                <button  type="submit" class="btn btn-success">Edit</button>-->
+<!--                                            </form>-->
+
+                                            <button type="button" class="btn btn-success" style="float:left;" th:onclick="showNoteModal('${note.noteId}')">Edit</button>
+                                            <a class="btn btn-danger" style="float:left; margin-left: 5px;"
+                                               th:href="@{/note/delete/{id}(id=${note.noteId})}">Delete</a>
+
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th scope="row" th:text="${note.noteTitle}" >Example Note Title</th>
+                                        <td th:text="${note.noteDescription}">Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -119,7 +133,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
+                                        <form action="#" th:action="@{/note}" th:object="${note}" method="POST">
                                             <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -214,8 +228,8 @@
 
         <!--For opening the note modal-->
         <script type="text/javascript">
+<!--var $j = jQuery.noConflict();-->
 
-            //TODO: tab geçişlerinde msg classlı div ler hide edilmeli!
 
             // For opening the note modal
             function showNoteModal(noteId, noteTitle, noteDescription) {
@@ -232,6 +246,18 @@
                 $('#credential-username').val(username ? username : '');
                 $('#credential-password').val(password ? password : '');
                 $('#credentialModal').modal('show');
+            }
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+	            localStorage.setItem('activeTab', $(e.target).attr('href'));
+            });
+            var activeTab = localStorage.getItem('activeTab');
+            console.log(activeTab);
+            if(activeTab) {
+	            $('.nav-tabs a[href="' + activeTab + '"]').tab('show');
+            } else {
+                $('.nav-tabs a[href="' + '#nav-files' + '"]').tab('show');
+                $(".msg").hide();
             }
         </script>
     </body>
