@@ -19,6 +19,7 @@ public interface NoteMapper {
     @Select("select * from notes where userid = #{userId} and noteid = #{noteId}")
     Note getNote(Integer userId, Integer noteId);
 
-    @Delete("delete from notes where noteid = #{noteId}")
-    int deleteNote(Integer noteId);
+    @Delete("delete from notes where userid = #{userId} and noteid = #{noteId}")
+    int deleteNote(Integer userId, Integer noteId);
+
 }

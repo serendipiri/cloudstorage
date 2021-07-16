@@ -90,14 +90,17 @@ public class NoteController {
 
 
     @GetMapping("/delete/{id}")
-    public String deleteNote(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    public String deleteNote(@PathVariable Integer id, Authentication authentication, RedirectAttributes redirectAttributes) {
 
         try {
 
-            Integer res = noteService.deleteFile(id);
+            Integer userId = userService.getUserId(authentication.getName());
+
+            Integer res = noteService.deleteNote(userId, id);
             if (res != null && res < 1) {
                 throw new CloudStorageException("Note could not be deleted!");
             }
+
             handleMessage(false, "Note deleted successfully.", redirectAttributes);
 
         } catch (CloudStorageException e) {
