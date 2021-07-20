@@ -4,6 +4,8 @@ import com.udacity.jwdnd.course1.cloudstorage.common.CloudStorageException;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,7 +52,7 @@ public class NoteController {
 
     private String edit(Note note, RedirectAttributes redirectAttributes) {
         try {
-//            noteService.editNote(note);
+            noteService.editNote(note);
             handleMessage(false, "Note updated successfully.", redirectAttributes);
 
         } catch (CloudStorageException e) {
@@ -63,8 +65,8 @@ public class NoteController {
     }
 
 
-    @GetMapping("select")
-    public String getEditView (@RequestParam Integer noteId, Authentication authentication, RedirectAttributes redirectAttributes) {
+    @GetMapping("select/{noteId}")
+    public ResponseEntity<Note> getEditView (@PathVariable Integer noteId, Authentication authentication, RedirectAttributes redirectAttributes) {
 
         try {
 
@@ -75,17 +77,21 @@ public class NoteController {
                 throw new CloudStorageException("Note could not be accessed.");
             }
 
-            redirectAttributes.addFlashAttribute("note", note);
-            redirectAttributes.addFlashAttribute("openModal", true);
+            return new ResponseEntity<>(note, HttpStatus.OK);
+
+//            redirectAttributes.addFlashAttribute("note", note);
+//            redirectAttributes.addFlashAttribute("openModal", true);
 
         } catch (CloudStorageException e) {
             handleMessage(true, e.getMessage(), redirectAttributes);
         } catch (Exception e) {
             e.printStackTrace();
             handleMessage(true, "Note could not be retrieved. Something went wrong.", redirectAttributes);
+
         }
 
-        return "redirect:/home";
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
     }
 
 

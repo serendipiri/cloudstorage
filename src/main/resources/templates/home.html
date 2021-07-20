@@ -110,13 +110,8 @@
                                 <tbody th:each="note: ${noteList}">
                                     <tr>
                                         <td>
-
-<!--                                            <form action="#" th:action="@{/note/edit}" th:method="POST" th:target="_blank" style="float:left;">-->
-<!--                                                <input type="hidden" name="noteId" th:value="${note.noteId}">-->
-<!--                                                <button  type="submit" class="btn btn-success">Edit</button>-->
-<!--                                            </form>-->
-
-                                            <button type="button" class="btn btn-success" style="float:left;" th:onclick="showNoteModal('${note.noteId}')">Edit</button>
+                                            <button type="button" class="btn btn-success" style="float:left;"
+                                                    th:onclick="getNote([[${note.noteId}]])">Edit</button>
                                             <a class="btn btn-danger" style="float:left; margin-left: 5px;"
                                                th:href="@{/note/delete/{id}(id=${note.noteId})}">Delete</a>
 
@@ -138,7 +133,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" th:action="@{/note}" th:object="${note}" method="POST">
+                                        <form action="#" id="noteForm" th:action="@{/note}" th:object="${note}" method="POST">
                                             <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -241,14 +236,12 @@
             </div>
         </div>
 
-        <script th:src="@{/js/jquery-slim.min.js}"></script>
+        <script th:src="@{/js/jquery.min.js}"></script>
         <script th:src="@{/js/popper.min.js}"></script>
         <script th:src="@{/js/bootstrap.min.js}"></script>
 
         <!--For opening the note modal-->
         <script type="text/javascript">
-<!--var $j = jQuery.noConflict();-->
-
 
             // For opening the note modal
             function showNoteModal(noteId, noteTitle, noteDescription) {
@@ -256,6 +249,14 @@
                 $('#note-title').val(noteTitle ? noteTitle : '');
                 $('#note-description').val(noteDescription ? noteDescription : '');
                 $('#noteModal').modal('show');
+            }
+
+            function getNote(id) {
+                $.ajax({
+                    url: "http://localhost:8080/note/select/" + id
+                }).then(function (data) {
+                    showNoteModal(data.noteId, data.noteTitle, data.noteDescription);
+                });
             }
 
             // For opening the credentials modal

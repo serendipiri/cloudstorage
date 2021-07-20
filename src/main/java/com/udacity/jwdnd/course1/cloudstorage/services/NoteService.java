@@ -31,4 +31,7 @@ public class NoteService {
         return noteMapper.deleteNote(userId, noteId);
     }
 
+    public void editNote(Note note) {
+        this.noteMapper.updateNote(note);
+    }
 }
