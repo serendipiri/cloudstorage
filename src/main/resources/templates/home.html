@@ -185,7 +185,8 @@
                                 <tbody>
                                 <tr th:each="credential: ${credentialList}">
                                     <td>
-                                        <button type="button" class="btn btn-success" style="float:left;" th:onclick="showCredentialModal('${credential.credentialId}')">Edit</button>
+                                        <button type="button" class="btn btn-success" style="float:left;"
+                                                th:onclick="getCredential([[${credential.credentialId}]])">Edit</button>
                                         <a class="btn btn-danger" style="float:left; margin-left: 5px;"
                                            th:href="@{/credential/delete/{id}(id=${credential.credentialId})}">Delete</a>
                                     </td>
@@ -255,6 +256,7 @@
                 $.ajax({
                     url: "http://localhost:8080/note/select/" + id
                 }).then(function (data) {
+                console.log(data);
                     showNoteModal(data.noteId, data.noteTitle, data.noteDescription);
                 });
             }
@@ -266,6 +268,15 @@
                 $('#credential-username').val(username ? username : '');
                 $('#credential-password').val(password ? password : '');
                 $('#credentialModal').modal('show');
+            }
+
+            function getCredential(id) {
+                $.ajax({
+                    url: "http://localhost:8080/credential/select/" + id
+                }).then(function (data) {
+                    console.log(data);
+                    showCredentialModal(data.credentialId, data.url, data.username, data.password);
+                });
             }
 
         </script>

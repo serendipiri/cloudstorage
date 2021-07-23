@@ -66,8 +66,9 @@ public class NoteController {
 
 
     @GetMapping("select/{noteId}")
-    public ResponseEntity<Note> getEditView (@PathVariable Integer noteId, Authentication authentication, RedirectAttributes redirectAttributes) {
+    public ResponseEntity<Note> getEditView (@PathVariable Integer noteId, Authentication authentication) {
 
+        ResponseEntity<Note> resp = null;
         try {
 
             Integer userId = userService.getUserId(authentication.getName());
@@ -77,20 +78,20 @@ public class NoteController {
                 throw new CloudStorageException("Note could not be accessed.");
             }
 
-            return new ResponseEntity<>(note, HttpStatus.OK);
-
-//            redirectAttributes.addFlashAttribute("note", note);
-//            redirectAttributes.addFlashAttribute("openModal", true);
-
-        } catch (CloudStorageException e) {
-            handleMessage(true, e.getMessage(), redirectAttributes);
-        } catch (Exception e) {
-            e.printStackTrace();
-            handleMessage(true, "Note could not be retrieved. Something went wrong.", redirectAttributes);
+//            model.addAttribute("error" , "error message???");
+            resp = new ResponseEntity<>(note, HttpStatus.OK);
 
         }
+//        catch (CloudStorageException e) {
+//            handleMessage(true, e.getMessage(), redirectAttributes);
+//        }
+        catch (Exception e) {
+            e.printStackTrace();
+            resp = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//            handleMessage(true, "Note could not be retrieved. Something went wrong.", redirectAttributes);
+        }
 
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return resp;
 
     }
 

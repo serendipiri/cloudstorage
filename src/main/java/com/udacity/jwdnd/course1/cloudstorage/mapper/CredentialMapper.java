@@ -22,4 +22,13 @@ public interface CredentialMapper {
     @Delete("delete from CREDENTIALS where userid = #{userId} and credentialid = #{credentialId}")
     int deleteCredential(Integer userId, Integer credentialId);
 
+    @Update("update CREDENTIALS set url = #{url}, username = #{username}, " +
+            "           key = #{key}, password = #{password} " +
+            " where userid = #{userId} and credentialid = #{credentialId}")
+    void updateCredential(Credential credential);
+
+    @Select("select credentialid from CREDENTIALS " +
+            " where userid = #{userId} and username = #{username} ")
+    Integer getCredentialIdCountByUsername(Credential credential);
+
 }
