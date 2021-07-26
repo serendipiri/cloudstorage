@@ -7,6 +7,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
@@ -33,6 +34,7 @@ class CloudStorageApplicationTests {
 	public void beforeEach() {
 		URL = "http://localhost:" + port;
 		this.driver = new ChromeDriver();
+		driver.manage().window().maximize();
 //		this.wait = new WebDriverWait(driver, 60);
 
 	}
@@ -57,11 +59,13 @@ class CloudStorageApplicationTests {
 		loginPage.login(username, password);
 	}
 
+	
 	@Test
 	public void getLoginPage() {
 		driver.get(URL + "/login");
 		Assertions.assertEquals("Cloud Storage App - Login", driver.getTitle());
 	}
+
 
 	@Test
 	@Order(1)
@@ -69,6 +73,7 @@ class CloudStorageApplicationTests {
 		driver.get(URL + "/home");
 		Assertions.assertEquals("Cloud Storage App - Login", driver.getTitle());
 	}
+
 
 	@Test
 	@Order(2)
@@ -94,15 +99,54 @@ class CloudStorageApplicationTests {
 	}
 
 
-//	public void testUnauthorizedUserAccess(){
-//		driver.get(baseURL+"/home");
-//		assertEquals("Login",driver.getTitle());
-//		driver.get(baseURL+"/upload");
-//		assertEquals("Login",driver.getTitle());
-//		driver.get(baseURL+"/credential/delete/");
-//		assertEquals("Login",driver.getTitle());
-//		driver.get(baseURL+"/addCredentials");
-//		assertEquals("Login",driver.getTitle());
-//	}
+	@Test
+	@Order(4)
+	public void addNote() throws InterruptedException {
+//		signup();
+		login();
+		String title = "Test First Note";
+		String descp = "Test First Note Description";
+
+		HomePage homePage = new HomePage(driver);
+		homePage.navNotes();
+
+		//There is no notes at first
+		Assertions.assertEquals(0, homePage.getListSize());
+
+		// Add a new Note
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		homePage.createNote(title, descp);
+
+		//List is not empty anymore
+		Assertions.assertEquals(1, homePage.getListSize());
+		Assertions.assertTrue(homePage.noteExists(title, descp));
+	}
+
+
+	@Test
+	@Order(5)
+	public void editNote() throws InterruptedException {
+
+		signup();
+		login();
+
+		String title = "Test Second Note";
+		String descp = "Test Second Note Description";
+		String editedTitle = "Test Second Note - Edited";
+		String editedDescp = "Test Second Note Description - Edited";
+
+		HomePage homePage = new HomePage(driver);
+		homePage.navNotes();
+
+		// Add a new Note
+		WebDriverWait wait = new WebDriverWait(driver, 20);
+		homePage.createNote(title, descp);
+
+		// Then edit it..
+		wait = new WebDriverWait(driver, 20);
+		homePage.editNote(title, descp, editedTitle, editedDescp);
+		Assertions.assertTrue(homePage.noteExists(editedTitle, editedDescp));
+
+	}
 
 }

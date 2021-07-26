@@ -93,7 +93,7 @@
                             <div class="alert alert-success fill-parent msg" th:if="${successMsgNote}">
                                 <span th:text="${successMsgNote}"></span>
                             </div>
-                            <button style="margin: 0.25em;" type="button" class="btn btn-info float-right" onclick="showNoteModal()">
+                            <button style="margin: 0.25em;" type="button" name="addNewNoteButton" class="btn btn-info float-right" onclick="showNoteModal()">
                                 + Add a New Note
                             </button>
                         </div>
@@ -107,17 +107,17 @@
                                         <th style="width: 60%" scope="col">Description</th>
                                     </tr>
                                 </thead>
-                                <tbody th:each="note: ${noteList}">
+                                <tbody th:each="note: ${noteList}" id="noteList">
                                     <tr>
                                         <td>
-                                            <button type="button" class="btn btn-success" style="float:left;"
+                                            <button type="button" class="btn btn-success edit-note-btn" style="float:left;"
                                                     th:onclick="getNote([[${note.noteId}]])">Edit</button>
                                             <a class="btn btn-danger" style="float:left; margin-left: 5px;"
                                                th:href="@{/note/delete/{id}(id=${note.noteId})}">Delete</a>
 
                                         </td>
-                                        <th scope="row" th:text="${note.noteTitle}">Example Note Title</th>
-                                        <td th:text="${note.noteDescription}">Example Note Description </td>
+                                        <th scope="row" th:text="${note.noteTitle}" id="row-noteTitle">Example Note Title</th>
+                                        <td th:text="${note.noteDescription}" id="row-noteDesc">Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -143,7 +143,7 @@
                                                 <label for="note-description" class="col-form-label">Description</label>
                                                 <textarea class="form-control" name="noteDescription" id="note-description" rows="5" maxlength="1000" required></textarea>
                                             </div>
-                                            <button id="noteSubmit" type="submit" class="d-none"></button>
+                                            <button id="noteSubmitButton" type="submit" class="d-none"></button>
                                         </form>
                                     </div>
                                     <div class="modal-footer">
@@ -256,7 +256,9 @@
                 $.ajax({
                     url: "http://localhost:8080/note/select/" + id
                 }).then(function (data) {
-                console.log(data);
+                    alert(1);
+                    alert(data);
+                    console.log(data);
                     showNoteModal(data.noteId, data.noteTitle, data.noteDescription);
                 });
             }
