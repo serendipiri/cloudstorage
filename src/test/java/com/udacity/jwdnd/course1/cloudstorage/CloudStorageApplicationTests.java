@@ -59,7 +59,7 @@ class CloudStorageApplicationTests {
 		loginPage.login(username, password);
 	}
 
-	
+
 	@Test
 	public void getLoginPage() {
 		driver.get(URL + "/login");

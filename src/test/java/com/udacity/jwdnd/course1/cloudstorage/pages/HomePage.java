@@ -118,6 +118,8 @@ public class HomePage {
 //            }
 //        });
 
+        Thread.sleep(4000);
+
         new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(noteTitleText)).sendKeys(editedTitle);
         new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(noteDescriptionText)).sendKeys(editedDescp);
 
