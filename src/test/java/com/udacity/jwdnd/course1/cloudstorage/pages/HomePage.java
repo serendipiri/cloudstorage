@@ -49,7 +49,26 @@ public class HomePage {
 
 
     /* CREDENTIAL */
+    @FindBy(id = "nav-credentials-tab")
+    private WebElement credentialTab;
 
+    @FindBy(name = "credentialNewNoteButton")
+    private WebElement addNewCredentialBtn;
+
+    @FindBy(id = "credentialSubmitBtn")
+    private WebElement credentialSubmitBtn;
+
+    @FindBy(id = "credential-url")
+    private WebElement credentialUrl;
+
+    @FindBy(id = "credential-username")
+    private WebElement credentialUsername;
+
+    @FindBy(id = "credential-password")
+    private WebElement credentialPassword;
+
+    @FindBy(id = "credentialList")
+    private List<WebElement> credentialList;
     /* CREDENTIAL */
 
 
@@ -59,6 +78,10 @@ public class HomePage {
 
     public void navNotes() {
         jse.executeScript("arguments[0].click()", notesTab);
+    }
+
+    public void navCredentials() {
+        jse.executeScript("arguments[0].click()", credentialTab);
     }
 
 
@@ -74,14 +97,8 @@ public class HomePage {
 
     }
 
-    public int getListSize() {
-
-        for (WebElement noteElement : noteList) {
-            String title = noteElement.findElement(By.id("row-noteTitle")).getText();
-            String description = noteElement.findElement(By.id("row-noteDesc")).getText();
-        }
+    public int getNoteListSize() {
         return noteList.size();
-
     }
 
     public boolean noteExists(String title, String descp) {
@@ -102,7 +119,7 @@ public class HomePage {
 
 
     public void editNote(String title, String descp,
-                         String editedTitle, String editedDescp) throws InterruptedException {
+                         String editedTitle, String editedDescp) {
 
         WebElement noteElement = getNoteElement(title, descp);
         jse.executeScript("arguments[0].click()", noteElement.findElement(By.className("edit-note-btn")));
@@ -120,6 +137,66 @@ public class HomePage {
 
         WebElement noteElement = getNoteElement(title, descp);
         jse.executeScript("arguments[0].click()", noteElement.findElement(By.className("delete-note-btn")));
+
+    }
+
+
+    public void createCredential(String url, String username, String password) {
+
+        jse.executeScript("arguments[0].click()", addNewCredentialBtn);
+
+        new WebDriverWait(driver, 6).until(ExpectedConditions.visibilityOf(credentialUrl));
+        new WebDriverWait(driver, 6).until(ExpectedConditions.visibilityOf(credentialUsername));
+        new WebDriverWait(driver, 6).until(ExpectedConditions.visibilityOf(credentialPassword));
+        jse.executeScript("arguments[0].value='" + url + "';", credentialUrl);
+        jse.executeScript("arguments[0].value='" + username + "';", credentialUsername);
+        jse.executeScript("arguments[0].value='" + password + "';", credentialPassword);
+        jse.executeScript("arguments[0].click()", credentialSubmitBtn);
+
+    }
+
+    public int getCredentialListSize() {
+        return credentialList.size();
+    }
+
+    public boolean credentialExists(String url, String username) {
+
+        WebElement credentialElement = getCredentialElement(url, username);
+        return credentialElement != null;
+
+    }
+
+
+    private WebElement getCredentialElement(String url, String username) {
+        return  credentialList.stream()
+                .filter(credential -> url.equals(credential.findElement(By.id("row-credentialUrl")).getText())
+                        && username.equals(credential.findElement(By.id("row-credentialUsername")).getText()))
+                .findAny()
+                .orElse(null);
+    }
+
+
+    public void editCredential(String url, String username, String password,
+                         String editedUrl, String editedUsername, String editedPassword) {
+
+        WebElement credentialElement = getCredentialElement(url, username);
+        jse.executeScript("arguments[0].click()", credentialElement.findElement(By.className("edit-credential-btn")));
+
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(credentialUrl));
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(credentialUsername));
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(credentialPassword));
+        jse.executeScript("arguments[0].value='" + editedUrl + "';", credentialUrl);
+        jse.executeScript("arguments[0].value='" + editedUsername + "';", credentialUsername);
+        jse.executeScript("arguments[0].value='" + editedPassword + "';", credentialPassword);
+        jse.executeScript("arguments[0].click()", credentialSubmitBtn);
+
+    }
+
+
+    public void deleteCredential(String url, String username) {
+
+        WebElement credentialElement = getCredentialElement(url, username);
+        jse.executeScript("arguments[0].click()", credentialElement.findElement(By.className("delete-credential-btn")));
 
     }
 }

@@ -26,14 +26,14 @@ public class NoteTests extends AuthenticationTests {
         HomePage homePage = loginAndNavigateNotes();
 
         //There is no notes at first
-        Assertions.assertEquals(0, homePage.getListSize());
+        Assertions.assertEquals(0, homePage.getNoteListSize());
 
         // Add a new Note
         new WebDriverWait(driver, 20);
         homePage.createNote(title, descp);
 
         //List is not empty anymore
-        Assertions.assertEquals(1, homePage.getListSize());
+        Assertions.assertEquals(1, homePage.getNoteListSize());
         Assertions.assertTrue(homePage.noteExists(title, descp));
     }
 
