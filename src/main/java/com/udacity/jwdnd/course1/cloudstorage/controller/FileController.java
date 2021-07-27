@@ -5,14 +5,14 @@ import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/file")
@@ -36,6 +36,10 @@ public class FileController {
             if (multipartFile == null || multipartFile.isEmpty()) {
                 throw new CloudStorageException("No file selected to upload!");
             }
+//            if (multipartFile.getSize() > maxFileSize) {
+//                System.out.println(multipartFile.getSize());
+//                throw new CloudStorageException("File size limit exceeded. You can upload max 5MB size of files.");
+//            }
             if (!fileService.isFileNameAvailable(multipartFile.getOriginalFilename(), userId)) {
                 throw new CloudStorageException("The file with this name is already exists.");
             } else {
@@ -53,11 +57,10 @@ public class FileController {
         return "redirect:/home";
     }
 
-    @PostMapping("/download")
-    public ResponseEntity downloadFile(@RequestParam("fileDownloadId") Integer id, Authentication authentication,
-                                       RedirectAttributes redirectAttributes) {
 
-        ResponseEntity<byte[]> response = ResponseEntity.notFound().build();
+    @PostMapping("/download")
+    public void downloadFile(@RequestParam("fileDownloadId") Integer id, HttpServletResponse response, Authentication authentication,
+                             RedirectAttributes redirectAttributes) {
 
         try {
 
@@ -68,11 +71,11 @@ public class FileController {
                 throw new CloudStorageException("File not found!");
             }
 
-            response = ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(file.getContentType()))
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "inline; filename=\"" + file.getFileName() + "\"")
-                    .body(file.getFileData());
+            response.setContentType(file.getContentType());
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=\"" + file.getFileName() + "\"");
+            response.getOutputStream().write(file.getFileData());
+
 
         } catch (CloudStorageException e) {
             handleMessage(true, e.getMessage(), redirectAttributes);
@@ -81,7 +84,6 @@ public class FileController {
             handleMessage(true, "File could not be downloaded. Something went wrong.", redirectAttributes);
         }
 
-        return response; //TODO: how to return error msg to /home page
     }
 
     @GetMapping("/delete/{id}")

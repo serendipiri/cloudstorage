@@ -6,4 +6,7 @@ public class CloudStorageException extends RuntimeException {
         super(message);
     }
 
+    public CloudStorageException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

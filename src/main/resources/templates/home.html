@@ -69,7 +69,7 @@
                                         <td>
                                             <form action="#" th:action="@{/file/download}" th:method="POST" th:target="_blank" style="float:left;">
                                                 <input type="hidden" name="fileDownloadId" th:value="${file.fileId}">
-                                                <button  type="submit" class="btn btn-success">View</button>
+                                                <button  type="submit" class="btn btn-success">Download</button>
                                             </form>
                                             <a class="btn btn-danger" style="float:left; margin-left: 5px;"
                                                th:href="@{/file/delete/{id}(id=${file.fileId})}">Delete</a>
