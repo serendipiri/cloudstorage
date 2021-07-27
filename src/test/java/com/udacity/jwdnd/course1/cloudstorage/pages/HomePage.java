@@ -14,9 +14,11 @@ import java.util.List;
 public class HomePage {
 
     private WebDriver driver;
+    private JavascriptExecutor jse;
 
     public HomePage(WebDriver driver) {
         this.driver = driver;
+        jse = (JavascriptExecutor) driver;
         PageFactory.initElements(driver, this);
     }
 
@@ -52,41 +54,43 @@ public class HomePage {
 
 
     public void logout() {
-        this.logoutButton.click();
+        jse.executeScript("arguments[0].click()", logoutButton);
     }
-
 
     public void navNotes() {
-        this.notesTab.click();
+        jse.executeScript("arguments[0].click()", notesTab);
     }
 
-    public void createNote(String title, String description) throws InterruptedException {
 
-        Thread.sleep(4000);
+    public void createNote(String title, String description) {
 
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("arguments[0].click()", addNewNoteBtn);
 
-        new WebDriverWait(driver, 6).until(ExpectedConditions.visibilityOf(noteTitleText)).sendKeys(title);
-        new WebDriverWait(driver, 6).until(ExpectedConditions.visibilityOf(noteDescriptionText)).sendKeys(description);
+        new WebDriverWait(driver, 6).until(ExpectedConditions.visibilityOf(noteTitleText));
+        new WebDriverWait(driver, 6).until(ExpectedConditions.visibilityOf(noteDescriptionText));
+        jse.executeScript("arguments[0].value='" + title + "';", noteTitleText);
+        jse.executeScript("arguments[0].value='" + description + "';", noteDescriptionText);
         jse.executeScript("arguments[0].click()", noteSubmitBtn);
-//        noteSubmitBtn.click();
 
     }
 
-    public int getListSize() throws InterruptedException {
-        Thread.sleep(3000);
+    public int getListSize() {
+
         for (WebElement noteElement : noteList) {
             String title = noteElement.findElement(By.id("row-noteTitle")).getText();
             String description = noteElement.findElement(By.id("row-noteDesc")).getText();
         }
-            return noteList.size();
+        return noteList.size();
+
     }
 
     public boolean noteExists(String title, String descp) {
+
         WebElement noteElement = getNoteElement(title, descp);
         return noteElement != null;
+
     }
+
 
     private WebElement getNoteElement(String title, String descp) {
         return  noteList.stream()
@@ -100,34 +104,22 @@ public class HomePage {
     public void editNote(String title, String descp,
                          String editedTitle, String editedDescp) throws InterruptedException {
 
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
-        Thread.sleep(3000);
-
         WebElement noteElement = getNoteElement(title, descp);
-        noteElement.findElement(By.className("edit-note-btn")).click();
+        jse.executeScript("arguments[0].click()", noteElement.findElement(By.className("edit-note-btn")));
 
-
-//        Wait<WebDriver> wait = new FluentWait<WebDriver>(driver)
-//                .withTimeout(Duration.ofSeconds(30))
-//                .pollingEvery(Duration.ofSeconds(5))
-//                .ignoring(NoSuchElementException.class);
-//
-//        WebElement foo = wait.until(new Function<WebDriver, WebElement>() {
-//            public WebElement apply(WebDriver driver) {
-//                return driver.findElement(By.id("note-title"));
-//            }
-//        });
-
-        Thread.sleep(4000);
-
-        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(noteTitleText)).sendKeys(editedTitle);
-        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOf(noteDescriptionText)).sendKeys(editedDescp);
-
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(noteTitleText));
+        new WebDriverWait(driver, 5).until(ExpectedConditions.visibilityOf(noteDescriptionText));
+        jse.executeScript("arguments[0].value='" + editedTitle + "';", noteTitleText);
+        jse.executeScript("arguments[0].value='" + editedDescp + "';", noteDescriptionText);
         jse.executeScript("arguments[0].click()", noteSubmitBtn);
-//        noteSubmitBtn.click();  NOT WORKING! Why?
-
 
     }
 
 
+    public void deleteNote(String title, String descp) {
+
+        WebElement noteElement = getNoteElement(title, descp);
+        jse.executeScript("arguments[0].click()", noteElement.findElement(By.className("delete-note-btn")));
+
+    }
 }

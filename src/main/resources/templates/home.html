@@ -112,7 +112,7 @@
                                         <td>
                                             <button type="button" class="btn btn-success edit-note-btn" style="float:left;"
                                                     th:onclick="getNote([[${note.noteId}]])">Edit</button>
-                                            <a class="btn btn-danger" style="float:left; margin-left: 5px;"
+                                            <a class="btn btn-danger delete-note-btn" style="float:left; margin-left: 5px;"
                                                th:href="@{/note/delete/{id}(id=${note.noteId})}">Delete</a>
 
                                         </td>
@@ -148,7 +148,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmit').click();">Save changes</button>
+                                        <button type="button" class="btn btn-primary" onclick="$('#noteSubmitButton').click();">Save changes</button>
                                     </div>
                                 </div>
                             </div>
@@ -253,11 +253,9 @@
             }
 
             function getNote(id) {
-                alert(1);
                 $.ajax({
-                    url: "http://localhost:8080/note/select/" + id
+                    url: "/note/select/" + id
                 }).then(function (data) {
-                    alert("Result: ");
                     console.log(data);
                     showNoteModal(data.noteId, data.noteTitle, data.noteDescription);
                 });
@@ -274,7 +272,7 @@
 
             function getCredential(id) {
                 $.ajax({
-                    url: "http://localhost:8080/credential/select/" + id
+                    url: "/credential/select/" + id
                 }).then(function (data) {
                     console.log(data);
                     showCredentialModal(data.credentialId, data.url, data.username, data.password);
