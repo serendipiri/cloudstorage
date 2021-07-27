@@ -73,7 +73,7 @@ public class CredentialService {
         credential.setPassword(encryptedPassword);
     }
 
-    public Integer getCredentialIdCountByUsername(Credential credential) {
-        return credentialMapper.getCredentialIdCountByUsername(credential);
+    public Integer getCredentialIdByUsername(Credential credential) {
+        return credentialMapper.getCredentialIdByUsername(credential);
     }
 }

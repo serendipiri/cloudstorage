@@ -25,4 +25,10 @@ public interface NoteMapper {
     @Update("UPDATE NOTES set notetitle= #{noteTitle}, notedescription = #{noteDescription} " +
             " WHERE userid = #{userId} and noteid = #{noteId}")
     void updateNote(Note note);
+
+    @Select("select noteid from NOTES " +
+            " where userid = #{userId} and notetitle = #{noteTitle} " +
+            "   and notedescription = #{noteDescription} ")
+    Integer getNoteIdByTitleAndDescp(Note note);
+
 }

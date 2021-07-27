@@ -29,6 +29,6 @@ public interface CredentialMapper {
 
     @Select("select credentialid from CREDENTIALS " +
             " where userid = #{userId} and username = #{username} ")
-    Integer getCredentialIdCountByUsername(Credential credential);
+    Integer getCredentialIdByUsername(Credential credential);
 
 }

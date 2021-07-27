@@ -30,11 +30,11 @@ public class CredentialController {
         try {
 
             credential.setUserId(userService.getUserId(authentication.getName()));
-            Integer existingCredId = credentialService.getCredentialIdCountByUsername(credential);
+            Integer existingCredId = credentialService.getCredentialIdByUsername(credential);
 
             if (existingCredId != null
                     && (credential.getCredentialId() == null || !existingCredId.equals(credential.getCredentialId()) )) {
-                throw new CloudStorageException("The credential with this username (" + credential.getUsername() + ") is already exists.");
+                throw new CloudStorageException("The credential with this username (" + credential.getUsername() + ") already exists.");
             }
 
             //Edit credential..

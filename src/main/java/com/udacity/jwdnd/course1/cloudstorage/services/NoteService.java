@@ -34,4 +34,8 @@ public class NoteService {
     public void editNote(Note note) {
         this.noteMapper.updateNote(note);
     }
+
+    public Integer getNoteIdByTitleAndDescp(Note note) {
+        return noteMapper.getNoteIdByTitleAndDescp(note);
+    }
 }

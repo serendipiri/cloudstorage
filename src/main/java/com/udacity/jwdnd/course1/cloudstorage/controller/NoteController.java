@@ -31,6 +31,13 @@ public class NoteController {
 
             note.setUserId(userService.getUserId(authentication.getName()));
 
+            Integer existingCredId = noteService.getNoteIdByTitleAndDescp(note);
+
+            if (existingCredId != null
+                    && (note.getNoteId() == null || !existingCredId.equals(note.getNoteId()) )) {
+                throw new CloudStorageException("Same note already exists.");
+            }
+
             //Edit note..
             if (note != null && note.getNoteId() != null) {
                 return edit(note, redirectAttributes);

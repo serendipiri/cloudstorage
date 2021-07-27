@@ -36,10 +36,6 @@ public class FileController {
             if (multipartFile == null || multipartFile.isEmpty()) {
                 throw new CloudStorageException("No file selected to upload!");
             }
-//            if (multipartFile.getSize() > maxFileSize) {
-//                System.out.println(multipartFile.getSize());
-//                throw new CloudStorageException("File size limit exceeded. You can upload max 5MB size of files.");
-//            }
             if (!fileService.isFileNameAvailable(multipartFile.getOriginalFilename(), userId)) {
                 throw new CloudStorageException("The file with this name is already exists.");
             } else {
