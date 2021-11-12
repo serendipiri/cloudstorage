@@ -2,7 +2,6 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.*;
@@ -14,6 +13,7 @@ import java.util.Base64;
 
 @Service
 public class EncryptionService {
+
     private Logger logger = LoggerFactory.getLogger(EncryptionService.class);
 
     public String encryptValue(String data, String key) {
